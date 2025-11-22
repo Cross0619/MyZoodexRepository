@@ -53,6 +53,25 @@ import androidx.compose.foundation.background // 背景色用
 import androidx.compose.foundation.layout.offset // 位置ずらし用
 import androidx.compose.ui.unit.sp            // 文字サイズ(sp)用
 
+import androidx.compose.foundation.ExperimentalFoundationApi // ←これが必要かも！
+
+// スクロール
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+//import androidx.compose.material.Icons.Default.List // または Icons.Default.List
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+// 以下の1行を import の並びに追加してください
+import androidx.compose.material.icons.automirrored.filled.Sort
+
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
+//import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
+
 
 // 既存のデータクラス
 data class Animal(
@@ -96,8 +115,8 @@ fun MyZoodexApp() {
     // ★ここにExcelで作った200匹のデータを貼り付けてください！
     val animals = listOf(
         Animal(1, "アジアゾウ", "東南アジア", "草原", "アジアゾーン：アジアゾウのすみか", 2, 4, "ゾウ", "ゾウ", "草、葉", R.drawable.animal_1),
-    Animal(2, "アフリカゾウ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 10, "ゾウ", "ゾウ", "果実", R.drawable.animal_1),
-    Animal(3, "マルミミゾウ", "アフリカ", "サバンナ", "ジャングルゾーン：草、葉食", 2, 1, "ゾウ", "ゾウ", "草、葉", R.drawable.animal_1),
+    Animal(2, "アフリカゾウ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 10, "ゾウ", "ゾウ", "果実", R.drawable.animal_1),
+    Animal(3, "マルミミゾウ", "アフリカ", "サバンナ", "ジャングルゾーン：草食エリア", 2, 1, "ゾウ", "ゾウ", "草、葉", R.drawable.animal_1),
     Animal(4, "アカカンガルー", "豪州", "草原", "オセアニアゾーン：カンガルーの草原", 2, 8, "カンガルー", "カンガルー", "草、葉", R.drawable.animal_1),
     Animal(5, "オオカンガルー", "豪州", "草原", "オセアニアゾーン：カンガルーの草原", 2, 4, "カンガルー", "カンガルー", "木の実、穀物", R.drawable.animal_1),
     Animal(6, "オグロワラビー", "豪州", "草原", "オセアニアゾーン：カンガルーの草原", 2, 1, "カンガルー", "カンガルー", "草、葉", R.drawable.animal_1),
@@ -125,46 +144,46 @@ fun MyZoodexApp() {
     Animal(28, "ハンドウイルカ", "海", "海", "海の生き物ゾーン：マリンワールド", 4, 9, "クジラウシ", "マイルカ", "魚介類", R.drawable.animal_1),
     Animal(29, "シャチ", "海", "海", "海の生き物ゾーン：マリンワールド", 2, 10, "クジラウシ", "マイルカ", "肉", R.drawable.animal_1),
     Animal(30, "シロイルカ", "海", "海", "海の生き物ゾーン：マリンワールド", 2, 7, "クジラウシ", "イッカク", "魚介類", R.drawable.animal_1),
-    Animal(31, "アメリカバイソン", "北米", "サバンナ", "アメリカゾーン：草、葉食エリア", 2, 4, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(32, "アフリカスイギュウ", "アフリカ", "アフリカ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(33, "ボンゴ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(34, "オグロヌー", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(35, "ガウル", "東南アジア", "草原", "アジアゾーン：草、葉食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(36, "ジャコウウシ", "日本", "山", "アメリカゾーン：草、葉食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(31, "アメリカバイソン", "北米", "サバンナ", "アメリカゾーン：草食エリア", 2, 4, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(32, "アフリカスイギュウ", "アフリカ", "アフリカ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(33, "ボンゴ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(34, "オグロヌー", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(35, "ガウル", "東南アジア", "草原", "アジアゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(36, "ジャコウウシ", "日本", "山", "アメリカゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
     Animal(37, "ニホンカモシカ", "日本", "山", "日本の動物ゾーン：天然記念物の森", 2, 4, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(38, "オリックス", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(39, "シロオリックス", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(40, "トムソンガゼル", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(41, "ブラックバック", "南アジア", "サバンナ", "アジアゾーン：草、葉食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(38, "オリックス", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(39, "シロオリックス", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(40, "トムソンガゼル", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(41, "ブラックバック", "南アジア", "サバンナ", "アジアゾーン：草食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
     Animal(42, "ウシ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
     Animal(43, "ヒツジ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 4, 3, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(44, "オオツノヒツジ", "北米", "山", "アメリカゾーン：草、葉食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(44, "オオツノヒツジ", "北米", "山", "アメリカゾーン：草食エリア", 2, 2, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
     Animal(45, "ヤギ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(46, "シロイワヤギ", "北米", "山", "アメリカゾーン：草、葉食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
-    Animal(47, "アメリカヘラジカ", "北米", "山", "アメリカゾーン：草、葉食エリア", 2, 5, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
-    Animal(48, "トナカイ", "北極圏", "山", "アメリカゾーン：草、葉食エリア", 2, 5, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
+    Animal(46, "シロイワヤギ", "北米", "山", "アメリカゾーン：草食エリア", 2, 1, "クジラウシ", "ウシ", "草、葉", R.drawable.animal_1),
+    Animal(47, "アメリカヘラジカ", "北米", "山", "アメリカゾーン：草食エリア", 2, 5, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
+    Animal(48, "トナカイ", "北極圏", "山", "アメリカゾーン：草食エリア", 2, 5, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
     Animal(49, "ニホンジカ", "日本", "山", "日本の動物ゾーン：日本の山", 2, 4, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
-    Animal(50, "アクシスジカ", "南アジア", "山", "アジアゾーン：草、葉食エリア", 2, 1, "クジラウシ", "シカ", "果実", R.drawable.animal_1),
-    Animal(51, "ワピチ", "北米", "山", "アメリカゾーン：草、葉食エリア", 2, 1, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
-    Animal(52, "アミメキリン", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 10, "クジラウシ", "キリン", "草、葉", R.drawable.animal_1),
-    Animal(53, "オカピ", "アフリカ", "サバンナ", "ジャングルゾーン：草、葉食", 2, 4, "クジラウシ", "キリン", "草、葉", R.drawable.animal_1),
-    Animal(54, "カバ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 1, 8, "クジラウシ", "カバ", "草、葉", R.drawable.animal_1),
-    Animal(55, "コビトカバ", "アフリカ", "サバンナ", "アフリカゾーン：草、葉食", 1, 4, "クジラウシ", "カバ", "草、葉", R.drawable.animal_1),
+    Animal(50, "アクシスジカ", "南アジア", "山", "アジアゾーン：草食エリア", 2, 1, "クジラウシ", "シカ", "果実", R.drawable.animal_1),
+    Animal(51, "ワピチ", "北米", "山", "アメリカゾーン：草食エリア", 2, 1, "クジラウシ", "シカ", "草、葉", R.drawable.animal_1),
+    Animal(52, "アミメキリン", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 10, "クジラウシ", "キリン", "草、葉", R.drawable.animal_1),
+    Animal(53, "オカピ", "アフリカ", "サバンナ", "ジャングルゾーン：草食エリア", 2, 4, "クジラウシ", "キリン", "草、葉", R.drawable.animal_1),
+    Animal(54, "カバ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 1, 8, "クジラウシ", "カバ", "草、葉", R.drawable.animal_1),
+    Animal(55, "コビトカバ", "アフリカ", "サバンナ", "アフリカゾーン：草食エリア", 1, 4, "クジラウシ", "カバ", "草、葉", R.drawable.animal_1),
     Animal(56, "ブタ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "クジラウシ", "イノシシ", "木の実、穀物", R.drawable.animal_1),
     Animal(57, "ニホンイノシシ", "日本", "草原", "日本の動物ゾーン：日本の山", 2, 2, "クジラウシ", "イノシシ", "木の実、穀物", R.drawable.animal_1),
-    Animal(58, "イボイノシシ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "イノシシ", "草、葉", R.drawable.animal_1),
-    Animal(59, "フタコブラクダ", "中央アジア", "サバンナ", "アジアゾーン：草、葉食エリア", 2, 6, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
-    Animal(60, "ヒトコブラクダ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 2, 1, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
+    Animal(58, "イボイノシシ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "イノシシ", "草、葉", R.drawable.animal_1),
+    Animal(59, "フタコブラクダ", "中央アジア", "サバンナ", "アジアゾーン：草食エリア", 2, 6, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
+    Animal(60, "ヒトコブラクダ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 2, 1, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
     Animal(61, "アルパカ", "南米", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
     Animal(62, "ラマ", "南米", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "クジラウシ", "ラクダ", "草、葉", R.drawable.animal_1),
     Animal(63, "ウマ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "ウマ", "ウマ", "草、葉", R.drawable.animal_1),
     Animal(64, "ポニー", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "ウマ", "ウマ", "草、葉", R.drawable.animal_1),
     Animal(65, "ロバ", "アフリカ", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "ウマ", "ウマ", "草、葉", R.drawable.animal_1),
-    Animal(66, "グレービーシマウマ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 4, 8, "ウマ", "ウマ", "草、葉", R.drawable.animal_1),
-    Animal(67, "シロサイ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 1, 9, "ウマ", "サイ", "枝、竹", R.drawable.animal_1),
-    Animal(68, "インドサイ", "南アジア", "サバンナ", "ジャングルゾーン：草、葉食", 1, 2, "ウマ", "サイ", "枝、竹", R.drawable.animal_1),
-    Animal(69, "マレーバク", "東南アジア", "サバンナ", "アジアゾーン：草、葉食エリア", 2, 4, "ウマ", "バク", "草、葉", R.drawable.animal_1),
-    Animal(70, "アメリカバク", "南米", "サバンナ", "アメリカゾーン：草、葉食エリア", 2, 1, "ウマ", "バク", "草、葉", R.drawable.animal_1),
+    Animal(66, "グレービーシマウマ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 4, 8, "ウマ", "ウマ", "草、葉", R.drawable.animal_1),
+    Animal(67, "シロサイ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 1, 9, "ウマ", "サイ", "枝、竹", R.drawable.animal_1),
+    Animal(68, "インドサイ", "南アジア", "サバンナ", "ジャングルゾーン：草食エリア", 1, 2, "ウマ", "サイ", "枝、竹", R.drawable.animal_1),
+    Animal(69, "マレーバク", "東南アジア", "サバンナ", "アジアゾーン：草食エリア", 2, 4, "ウマ", "バク", "草、葉", R.drawable.animal_1),
+    Animal(70, "アメリカバク", "南米", "サバンナ", "アメリカゾーン：草食エリア", 2, 1, "ウマ", "バク", "草、葉", R.drawable.animal_1),
     Animal(71, "ライオン", "アフリカ", "サバンナ", "アフリカサファリゾーン：肉食", 2, 9, "ネコ", "ネコ", "肉", R.drawable.animal_1),
     Animal(72, "ホワイトライオン", "アフリカ", "サバンナ", "アフリカサファリゾーン：肉食", 2, 10, "ネコ", "ネコ", "肉", R.drawable.animal_1),
     Animal(73, "ベンガルトラ", "南アジア", "ジャングル", "アジアゾーン：トラたちの森", 1, 9, "ネコ", "ネコ", "肉", R.drawable.animal_1),
@@ -264,7 +283,7 @@ fun MyZoodexApp() {
         Animal(167, "ニワトリ", "家畜ペット", "牧場", "ふれあい動物ゾーン：ふれあい牧場", 2, 3, "キジ", "キジ", "木の実、穀物", R.drawable.animal_1),
         Animal(168, "シチメンチョウ", "北米", "草原", "アメリカゾーン：鳥", 2, 1, "キジ", "キジ", "爬虫類", R.drawable.animal_1),
         Animal(169, "マメハチドリ", "南米", "森", "アメリカゾーン：鳥", 2, 2, "アマツバメ", "ハチドリ", "虫", R.drawable.animal_1),
-        Animal(170, "ダチョウ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草、葉食", 4, 7, "ダチョウ", "ダチョウ", "草、葉", R.drawable.animal_1),
+        Animal(170, "ダチョウ", "アフリカ", "サバンナ", "アフリカサファリゾーン：草食エリア", 4, 7, "ダチョウ", "ダチョウ", "草、葉", R.drawable.animal_1),
         Animal(171, "エミュー", "豪州", "草原", "オセアニアゾーン：鳥", 2, 1, "ヒクイドリ", "ヒクイドリ", "虫", R.drawable.animal_1),
         Animal(172, "ヒクイドリ", "オセアニア", "湿地", "オセアニアゾーン：鳥", 1, 1, "ヒクイドリ", "ヒクイドリ", "果実", R.drawable.animal_1),
         Animal(173, "キーウィ", "オセアニア", "草原", "オセアニアゾーン：鳥", 1, 2, "キーウィ", "キーウィ", "虫", R.drawable.animal_1),
@@ -297,58 +316,74 @@ fun MyZoodexApp() {
         Animal(200, "インドガビアル", "南アジア", "サバンナ", "爬虫類の館", 2, 1, "ワニ", "インドガビアル", "魚介類", R.drawable.animal_1),
         )
 
+    // ★状態管理をここに移動（リフトアップ）
+    var searchText by remember { mutableStateOf("") }
+    var sortType by remember { mutableStateOf(SortType.ID_ASC) }
+
+    // ★ここで検索とソートを一括で行う！
+    val currentList = remember(animals, searchText, sortType) {
+        // 1. まず検索フィルター
+        val filtered = if (searchText.isBlank()) {
+            animals
+        } else {
+            animals.filter {
+                it.name.contains(searchText, ignoreCase = true) ||
+                        it.order.contains(searchText, ignoreCase = true) ||
+                        it.family.contains(searchText, ignoreCase = true)
+            }
+        }
+        // 2. 次にソート
+        when (sortType) {
+            SortType.ID_ASC -> filtered.sortedBy { it.id }
+            SortType.ID_DESC -> filtered.sortedByDescending { it.id }
+            SortType.POPULARITY_DESC -> filtered.sortedWith(compareByDescending<Animal> { it.popularity }.thenBy { it.id })
+            SortType.POPULARITY_ASC -> filtered.sortedWith(compareBy<Animal> { it.popularity }.thenBy { it.id })
+            SortType.NAME_ASC -> filtered.sortedBy { it.name }
+            SortType.NAME_DESC -> filtered.sortedByDescending { it.name }
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = "splash" // 文字列で直接指定に変更（シンプル化）
+        startDestination = "splash"
     ) {
-        // ★新しく追加：スプラッシュ画面の設定
         composable("splash") {
             SplashScreen(
                 onTimeout = {
-                    // 2秒経ったらリスト画面へ移動
-                    // popUpTo("splash") { inclusive = true } で「戻る」ボタンで起動画面に戻れないようにする
                     navController.navigate("animalList") {
                         popUpTo("splash") { inclusive = true }
                     }
                 }
             )
         }
-        // 1. 一覧画面
-        composable("animalList") {
 
+        composable("animalList") {
+            // リスト画面に「今のリスト」と「検索/ソートの状態」を渡す
             AnimalListScreen(
-                animals = animals,
+                animals = currentList,
+                searchText = searchText,           // 追加
+                onSearchTextChange = { searchText = it }, // 追加
+                sortType = sortType,               // 追加
+                onSortTypeChange = { sortType = it }, // 追加
                 onAnimalClick = { animalId ->
-                    // IDを付けて詳細画面へ移動
                     navController.navigate("animalDetail/$animalId")
                 }
             )
         }
 
-        // 2. 詳細画面
         composable(
             route = "animalDetail/{animalId}",
-            // ★ここが修正ポイント！「animalIdは数字(Int)だよ」と明記します
             arguments = listOf(navArgument("animalId") { type = NavType.IntType })
         ) { backStackEntry ->
-            // 数字としてIDを確実に取り出します
-            val animalId = backStackEntry.arguments?.getInt("animalId")
-            val animal = animals.find { it.id == animalId }
+            val animalId = backStackEntry.arguments?.getInt("animalId") ?: 1
 
-            if (animal != null) {
-                AnimalDetailScreen(
-                    animal = animal,
-                    onBackClick = { navController.popBackStack() }
-                )
-            } else {
-                // 万が一データが見つからない場合の画面
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("データが見つかりません (ID: $animalId)")
-                }
-            }
+            // ★重要：ここでもソート済みの currentList を渡す！
+            // これにより、スワイプ順序がソート順になる
+            AnimalDetailScreen(
+                animals = currentList,
+                initialAnimalId = animalId,
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }
@@ -358,28 +393,51 @@ fun MyZoodexApp() {
 @Composable
 fun AnimalListScreen(
     animals: List<Animal>,
+    searchText: String,                    // 受け取る変数が変わりました
+    onSearchTextChange: (String) -> Unit,  // 受け取る関数が変わりました
+    sortType: SortType,                    // ソート状態
+    onSortTypeChange: (SortType) -> Unit,  // ソート変更時の処理
     onAnimalClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // 検索テキストを保持する状態
-    var searchText by remember { mutableStateOf("") } // ★ここが検索バーの状態です
-
-    // 検索テキストに基づいてリストをフィルターする処理
-    val filteredAnimals = if (searchText.isBlank()) {
-        animals // 検索語がない場合は全ての動物を表示
-    } else {
-        animals.filter {
-            // 名前、分類（目）、分類（科）のいずれかに検索語が含まれているかをチェック
-            it.name.contains(searchText, ignoreCase = true) ||
-                    it.order.contains(searchText, ignoreCase = true) ||
-                    it.family.contains(searchText, ignoreCase = true)
-        }
-    }
+    // ドロップダウンメニューの開閉状態
+    var showMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("MyZoodex 🦁") },
+                actions = {
+                    // ソートボタン
+                    IconButton(onClick = { showMenu = true }) {
+                        // アイコン (Sortがない場合は List などを代用)
+                        Icon(Icons.Filled.List, contentDescription = "ソート")
+                    }
+                    // ドロップダウンメニュー
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        // Enumの全種類をメニューに表示
+                        SortType.values().forEach { type ->
+                            DropdownMenuItem(
+                                text = {
+                                    // 選択中の項目は太字にしたり色を変えたり
+                                    val isSelected = type == sortType
+                                    Text(
+                                        text = type.label,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
+                                onClick = {
+                                    onSortTypeChange(type)
+                                    showMenu = false
+                                }
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -392,19 +450,19 @@ fun AnimalListScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // 検索バーの配置
+            // 検索バー (引数が変わったので修正)
             MySearchBar(
                 query = searchText,
-                onQueryChange = { searchText = it } // テキストが変わったら状態を更新
+                onQueryChange = onSearchTextChange
             )
 
-            // フィルターされたリストを表示
+            // リスト表示
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(filteredAnimals) { animal ->
+                items(animals) { animal ->
                     AnimalCard(animal, onAnimalClick)
                 }
             }
@@ -458,7 +516,7 @@ fun AnimalCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "エサ: ${animal.food}",
+                    text = "分類:${animal.order}目 / ${animal.family}科",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -466,17 +524,51 @@ fun AnimalCard(
     }
 }
 
-// 詳細画面
-@OptIn(ExperimentalMaterial3Api::class)
+// ページ送り機能付きの詳細画面（親）
+@OptIn(ExperimentalFoundationApi::class) // Pagerを使うためのおまじない
 @Composable
 fun AnimalDetailScreen(
+    animals: List<Animal>,
+    initialAnimalId: Int,
+    onBackClick: () -> Unit
+) {
+    // 最初にどのページ(何番目の動物)を開くか計算
+    // データ上のIDと、リストの順番(0から始まる)を合わせる
+    val initialPage = animals.indexOfFirst { it.id == initialAnimalId }.takeIf { it >= 0 } ?: 0
+
+    // ページの状態を管理するもの
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { animals.size }
+    )
+
+    // 横スワイプの箱を作る
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxSize()
+    ) { pageIndex ->
+        // pageIndex番目の動物データを取得
+        val animal = animals[pageIndex]
+
+        // 実際の表示はこの関数にお任せ
+        AnimalDetailContent(animal = animal, onBackClick = onBackClick)
+    }
+}
+
+// 今までの詳細画面の中身（子）
+// 名前を AnimalDetailContent に変更しました
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnimalDetailContent(
     animal: Animal,
     onBackClick: () -> Unit
 ) {
+    // ドロップダウンメニューの開閉状態
+    var showMenu by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(animal.name) },
+                title = { Text("No.${animal.id} ${animal.name}") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "戻る")
@@ -489,7 +581,6 @@ fun AnimalDetailScreen(
             )
         }
     ) { innerPadding ->
-        // 背景色を少しグレーにして、カードっぽさを出す
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -499,16 +590,16 @@ fun AnimalDetailScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()) // スクロール可能に！
+                    .verticalScroll(rememberScrollState())
             ) {
-                // 1. メイン画像（画面幅いっぱいに表示）
+                // 1. メイン画像
                 Image(
                     painter = painterResource(id = getAnimalImageRes(animal.id)),
                     contentDescription = animal.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp) // 高さを300dpにして迫力を出す
+                        .height(350.dp)
                 )
 
                 // 2. 情報エリア
@@ -526,11 +617,12 @@ fun AnimalDetailScreen(
                         )
                     }
 
-                    // 人気度の★
+
+                    // 人気度の★ (左寄せ修正済み)
                     Column(horizontalAlignment = Alignment.Start) {
                         Text(
                             text = "★".repeat(animal.popularity),
-                            color = Color(0xFFFFD700), // ゴールド
+                            color = Color(0xFFFFD700),
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
@@ -539,7 +631,7 @@ fun AnimalDetailScreen(
                     HorizontalDivider()
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // 3. スペック表（見出し付き）
+                    // 3. スペック表
                     SectionTitle(title = "基本データ")
                     InfoRow(label = "分類", value = "${animal.order}目 / ${animal.family}科")
                     InfoRow(label = "生息地", value = animal.distribution)
@@ -551,7 +643,6 @@ fun AnimalDetailScreen(
                     InfoRow(label = "エサ", value = animal.food)
                     InfoRow(label = "飼育数", value = "${animal.count}頭")
 
-                    // 最後に余白
                     Spacer(modifier = Modifier.height(50.dp))
                 }
             }
@@ -640,7 +731,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
     // import androidx.compose.runtime.LaunchedEffect
     // import kotlinx.coroutines.delay
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(2000)
+        kotlinx.coroutines.delay(1000)
         onTimeout()
     }
 
@@ -677,4 +768,14 @@ fun SplashScreen(onTimeout: () -> Unit) {
             )
         }
     }
+}
+
+// ソートの種類を定義
+enum class SortType(val label: String) {
+    ID_ASC("No. 昇順 (1→200)"),
+    ID_DESC("No. 降順 (200→1)"),
+    POPULARITY_DESC("人気が高い順"),
+    POPULARITY_ASC("人気が低い順"),
+    NAME_ASC("名前順 (ア→ン)"),
+    NAME_DESC("名前順 (ン→ア)")
 }

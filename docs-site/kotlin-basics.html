@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kotlin 基本文法 | MyZoodex 学習ブログ</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">MyZoodex 学習ブログ</div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="android-setup.html">Android Studio</a>
+        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="compose-basics.html">Compose入門</a>
+        <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
+        <a href="next-steps.html">次のステップ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <article>
+      <h1>Kotlin の基本文法を押さえよう</h1>
+      <p>Kotlin 公式ドキュメントの「Basic syntax」「Null safety」「Classes and Objects」をベースに、MyZoodex にも登場する表現を中心に紹介します。</p>
+
+      <h2>val と var、型推論</h2>
+      <p><code>val</code> は再代入不可の変数、<code>var</code> は再代入可能です。型は多くの場合コンパイラが推論してくれます。</p>
+      <div class="code-block">val zooName = "MyZoodex" // String と推論される
+var count: Int = 200      // 明示的に Int を指定</div>
+
+      <h2>関数定義</h2>
+      <p><code>fun</code> キーワードで宣言します。戻り値が 1 行なら単一式関数で書けます。</p>
+      <div class="code-block">fun greet(name: String): String {
+    return "こんにちは、${'$'}name さん"
+}
+
+fun greetShort(name: String) = "こんにちは、${'$'}name さん"</div>
+
+      <h2>if と when</h2>
+      <p><code>if</code> も <code>when</code> も「式」として値を返せるのが Kotlin の特徴です。</p>
+      <div class="code-block">val popularity = 8
+val tag = if (popularity >= 8) "大人気" else "のんびり"
+
+val terrain = "サバンナ"
+val icon = when (terrain) {
+    "サバンナ" -> "🌾"
+    "ジャングル" -> "🌴"
+    else -> "🐾"
+}</div>
+
+      <h2>クラスと data class</h2>
+      <p>MyZoodex では動物 1 件を表す <code>data class</code> が中心です。主な特徴は、プロパティの自動生成（<code>equals</code> / <code>hashCode</code> / <code>copy</code> など）です。</p>
+      <div class="code-block">data class Animal(
+    val id: Int,
+    val name: String,
+    val distribution: String,
+    val terrain: String,
+    val area: String,
+    val count: Int,
+    val popularity: Int,
+    val order: String,
+    val family: String,
+    val food: String,
+    val imageRes: Int
+)
+
+val elephant = Animal(1, "アジアゾウ", "東南アジア", "草原", "アジアゾーン", 2, 4, "ゾウ", "ゾウ", "草", R.drawable.animal_1)</div>
+
+      <h2>コレクションと簡単な操作</h2>
+      <p><code>listOf</code> で不変リスト、<code>mutableListOf</code> で可変リストを作れます。<code>filter</code> や <code>map</code> などの操作はラムダ式で書くのが定番です。</p>
+      <div class="code-block">val animals = listOf(elephant, /* 他の動物 */)
+val savanna = animals.filter { it.terrain == "サバンナ" }
+val names = animals.map { it.name }
+val sorted = animals.sortedBy { it.popularity }</div>
+
+      <h2>null 安全</h2>
+      <p>Kotlin では、null を許容する型は <code>String?</code> のように <code>?</code> を付けます。安全呼び出し <code>?.</code> やエルビス演算子 <code>?:</code> を活用することで、NullPointerException を防ぎます。</p>
+      <div class="code-block">val note: String? = null
+val length = note?.length ?: 0 // null のときは 0 を返す</div>
+
+      <h2>MyZoodex での使われ方</h2>
+      <p>MainActivity.kt では、動物リストを <code>listOf</code> でまとめ、<code>filter</code> や <code>sortedBy</code> で検索・並べ替えをしています。こうしたコレクション操作に慣れておくと、アプリの振る舞いを読み解きやすくなります。</p>
+    </article>
+
+    <aside class="sidebar">
+      <h3>用語メモ</h3>
+      <p>・ラムダ式: 無名関数のこと。<code>{ it.name }</code> のように書く。<br>・スマートキャスト: null チェックの後は非 null として扱える Kotlin の仕組み。</p>
+      <h3>次に読む</h3>
+      <p>Jetpack Compose の UI コードでも同じ文法が登場します。特に <code>when</code> と <code>data class</code> は頻出なので復習しておきましょう。</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2024 MyZoodex Learning Notes. Kotlin で楽しく学ぼう。
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

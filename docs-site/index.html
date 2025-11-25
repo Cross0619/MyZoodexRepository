@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyZoodex 学習サイト</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">MyZoodex 学習ブログ</div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="android-setup.html">Android Studio</a>
+        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="compose-basics.html">Compose入門</a>
+        <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
+        <a href="next-steps.html">次のステップ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <article>
+      <section class="hero">
+        <div>
+          <div class="highlight">Android/Kotlin 初学者向け</div>
+          <h1>動物図鑑アプリ「MyZoodex」で学ぶ Android 入門</h1>
+          <p>このサイトは、既存の Android アプリ「MyZoodex」を題材に、Android Studio のセットアップから Kotlin・Jetpack Compose の基本、サンプルコードの読み方までを丁寧に解説する技術ブログです。まずは Android Studio をインストールし、少しずつコードに触れていきましょう。</p>
+          <div class="note">想定読者: Android/Kotlin はほぼ未経験。まずは 1 本のアプリを自作してみたい方。</div>
+        </div>
+        <div class="card">
+          <h3>学習ステップの流れ</h3>
+          <ol class="steps">
+            <li>Android Studio をインストールする</li>
+            <li>Kotlin の基本文法を押さえる</li>
+            <li>Jetpack Compose で UI を作る</li>
+            <li>MyZoodex のコードを読み解く</li>
+            <li>公式ドキュメントで知識を広げる</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>各ステップへのリンク</h2>
+        <div class="card-grid">
+          <a class="card" href="android-setup.html">
+            <h3>Android Studio の準備</h3>
+            <p>公式ドキュメントをベースに、初期設定やエミュレータの起動手順をまとめました。</p>
+            <small>環境構築から始めたい方へ</small>
+          </a>
+          <a class="card" href="kotlin-basics.html">
+            <h3>Kotlin 基本文法</h3>
+            <p>val/var や if・when、data class、null 安全など、MyZoodex にも登場する文法を解説します。</p>
+            <small>コードの読み書きを始める前に</small>
+          </a>
+          <a class="card" href="compose-basics.html">
+            <h3>Jetpack Compose 入門</h3>
+            <p>Composable 関数や Modifier、状態管理の基礎を、短いサンプルコード付きで紹介します。</p>
+            <small>UI の作り方を知りたい方へ</small>
+          </a>
+          <a class="card" href="myzoodex-tutorial.html">
+            <h3>MyZoodex のコード解説</h3>
+            <p>MainActivity.kt をもとに、データ定義・検索・画面遷移の流れを詳しく追っていきます。</p>
+            <small>実際のアプリ構成を学ぶ</small>
+          </a>
+          <a class="card" href="next-steps.html">
+            <h3>次のステップ</h3>
+            <p>公式チュートリアルやリファレンスを中心に、学びを継続するための道しるべをまとめました。</p>
+            <small>もっと深く学びたい方へ</small>
+          </a>
+        </div>
+      </section>
+    </article>
+
+    <aside class="sidebar">
+      <h3>このサイトのゴール</h3>
+      <p>・Android Studio をインストールして動かせる<br>・Kotlin と Jetpack Compose の基本がつかめる<br>・MyZoodex のコードを追いながら、自分で似た構成のアプリを作れる自信を持つ</p>
+      <h3>おすすめの読み方</h3>
+      <p>1 つのステップを読み終えたら、実際に Android Studio で試しながら進めると理解が深まります。</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2024 MyZoodex Learning Notes. 学習の一歩を応援します。
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

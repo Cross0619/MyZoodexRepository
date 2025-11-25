@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jetpack Compose 入門 | MyZoodex 学習ブログ</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">MyZoodex 学習ブログ</div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="android-setup.html">Android Studio</a>
+        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="compose-basics.html">Compose入門</a>
+        <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
+        <a href="next-steps.html">次のステップ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <article>
+      <h1>Jetpack Compose の基本</h1>
+      <p>Jetpack Compose は「UI をコードで宣言的に書く」ための Android 公式フレームワークです。XML のレイアウトファイルは不要になり、状態に応じて UI を組み替える発想が中心になります。</p>
+
+      <h2>@Composable 関数</h2>
+      <p>UI を描く関数には <code>@Composable</code> アノテーションを付けます。関数名は動詞 + 名詞で「何を描くか」が伝わるようにすると読みやすくなります。</p>
+      <div class="code-block">@Composable
+fun Greeting(name: String) {
+    Text(text = "こんにちは、${'$'}name")
+}</div>
+
+      <h2>基本の UI 要素</h2>
+      <ul>
+        <li><strong>Text</strong>: 文字列を表示します。</li>
+        <li><strong>Button</strong>: クリック可能なボタン。<code>onClick</code> にラムダを渡します。</li>
+        <li><strong>Column / Row</strong>: 縦・横方向に子要素を並べるレイアウト。</li>
+      </ul>
+      <div class="code-block">@Composable
+fun ButtonsSample() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Compose は宣言的 UI")
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { /* TODO: 処理 */ }) {
+            Text("タップしてみる")
+        }
+    }
+}</div>
+
+      <h2>Modifier の役割</h2>
+      <p><code>Modifier</code> は「余白を入れる」「サイズを変える」など、コンポーネントに後付けで振る舞いを加えるオブジェクトです。Compose ではレイアウトや装飾を Modifier に集約することで読みやすいコードを保ちます。</p>
+
+      <h2>状態管理の最初の一歩</h2>
+      <p>Compose では「状態 (State) が変わると UI も再描画される」仕組みです。シンプルな入力フォームなら <code>remember { mutableStateOf() }</code> を覚えておきましょう。</p>
+      <div class="code-block">@Composable
+fun HelloForm() {
+    var name by remember { mutableStateOf("") }
+    Column(modifier = Modifier.padding(16.dp)) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("お名前") }
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(text = if (name.isNotBlank()) "こんにちは、${'$'}name さん" else "入力を待っています")
+    }
+}</div>
+
+      <h2>ミニデモ：入力した名前を表示</h2>
+      <p>上のコードをそのまま <code>setContent { HelloForm() }</code> に差し替えるだけで動く簡単なデモです。状態と UI が 1 ファイルで完結するのが Compose の強みです。</p>
+    </article>
+
+    <aside class="sidebar">
+      <h3>補足</h3>
+      <p>・従来の View + XML との違いは「状態をソースにして UI を宣言する」点。<br>・状態を持ちすぎると追いかけづらいので、画面単位で「誰がどの状態を持つか」を意識しましょう。</p>
+      <h3>先取りキーワード</h3>
+      <p>NavHost（画面遷移）や Scaffold（画面構造）は MyZoodex のチュートリアルで登場します。概要だけ頭に入れておくと読みやすくなります。</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2024 MyZoodex Learning Notes. Compose で UI を楽しもう。
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

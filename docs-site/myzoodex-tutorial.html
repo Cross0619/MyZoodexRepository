@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyZoodex コード解説 | MyZoodex 学習ブログ</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">MyZoodex 学習ブログ</div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="android-setup.html">Android Studio</a>
+        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="compose-basics.html">Compose入門</a>
+        <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
+        <a href="next-steps.html">次のステップ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <article>
+      <h1>MyZoodex のコードを読み解く</h1>
+      <p>ここでは <code>MainActivity.kt</code> を中心に、データ定義から画面遷移、検索・ソート、詳細画面のスワイプまで、ポイントを抜粋して解説します。実際のコード断片を引用しながら「なぜこう書くのか」を丁寧に追っていきます。</p>
+
+      <h2>データ定義：Animal データクラス</h2>
+      <p>動物 1 件を表す <code>data class Animal</code> には、名前や生息地、分類、人気度などの情報がまとまっています。アプリ内の「ミニデータベース」として機能し、List で大量のデータを扱いやすくします。</p>
+      <div class="code-block">data class Animal(
+    val id: Int,
+    val name: String,
+    val distribution: String,
+    val terrain: String,
+    val area: String,
+    val count: Int,
+    val popularity: Int,
+    val order: String,
+    val family: String,
+    val food: String,
+    val imageRes: Int
+)</div>
+      <p>実際のプロジェクトでは 100 件以上の動物が <code>listOf</code> に並び、擬似的なデータベースとして使われています。</p>
+
+      <h2>MyZoodexApp: 状態とナビゲーションのハブ</h2>
+      <p><code>MyZoodexApp</code> は Compose のエントリーポイントで、検索キーワードやソート順を <code>remember</code> で保持しつつ、Navigation Compose の <code>NavHost</code> を介して画面を切り替えます。</p>
+      <div class="code-block">var searchText by remember { mutableStateOf("") }
+var sortType by remember { mutableStateOf(SortType.ID_ASC) }
+
+val currentList = remember(animals, searchText, sortType) {
+    val filtered = if (searchText.isBlank()) animals else {
+        animals.filter {
+            it.name.contains(searchText, ignoreCase = true) ||
+            it.order.contains(searchText, ignoreCase = true) ||
+            it.family.contains(searchText, ignoreCase = true)
+        }
+    }
+    when (sortType) {
+        SortType.ID_ASC -> filtered.sortedBy { it.id }
+        SortType.ID_DESC -> filtered.sortedByDescending { it.id }
+        SortType.POPULARITY_DESC -> filtered.sortedWith(compareByDescending<Animal> { it.popularity }.thenBy { it.id })
+        SortType.POPULARITY_ASC -> filtered.sortedWith(compareBy<Animal> { it.popularity }.thenBy { it.id })
+        SortType.NAME_ASC -> filtered.sortedBy { it.name }
+        SortType.NAME_DESC -> filtered.sortedByDescending { it.name }
+    }
+}</div>
+      <p>検索とソートを 1 か所でまとめて計算し、その結果を <code>currentList</code> として一覧・詳細の両画面へ渡すのがポイントです。<code>NavHost</code> ではスプラッシュ→一覧→詳細という 3 つのルートを定義し、<code>animalId</code> を引数で受け渡します。</p>
+
+      <h2>一覧画面：AnimalListScreen</h2>
+      <p>一覧画面は <code>Scaffold</code> で構造を作り、検索バーとリストを縦に並べています。検索バーは <code>MySearchBar</code> コンポーネントで、入力が変わるたびに親へ状態を渡しています。</p>
+      <div class="code-block">Scaffold(
+    topBar = {
+        TopAppBar(
+            title = { Text("MyZoodex 🦁") },
+            actions = {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(Icons.Filled.List, contentDescription = "ソート")
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    SortType.values().forEach { type ->
+                        DropdownMenuItem(
+                            text = {
+                                val isSelected = type == sortType
+                                Text(
+                                    text = type.label,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                )
+                            },
+                            onClick = {
+                                onSortTypeChange(type)
+                                showMenu = false
+                            }
+                        )
+                    }
+                }
+            }
+        )
+    }
+) { innerPadding ->
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+    ) {
+        MySearchBar(query = searchText, onQueryChange = onSearchTextChange)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(animals) { animal ->
+                AnimalCard(animal, onAnimalClick)
+            }
+        }
+    }
+}</div>
+      <p>ソート用の <code>DropdownMenu</code> では <code>SortType</code> の全パターンを回し、選択された値を親に返しています。リストの各行は <code>AnimalCard</code> で構成され、タップすると <code>animalId</code> をナビゲーションに渡して詳細画面へ進みます。</p>
+
+      <h2>詳細画面：HorizontalPager でスワイプ</h2>
+      <p>詳細画面は 2 層構成です。外側の <code>AnimalDetailScreen</code> がページ送り (HorizontalPager) を担当し、内側の <code>AnimalDetailContent</code> で実際の表示を行います。初期ページは受け取った <code>animalId</code> に合わせて計算されています。</p>
+      <div class="code-block">val initialPage = animals.indexOfFirst { it.id == initialAnimalId }.takeIf { it >= 0 } ?: 0
+val pagerState = rememberPagerState(
+    initialPage = initialPage,
+    pageCount = { animals.size }
+)
+
+HorizontalPager(
+    state = pagerState,
+    modifier = Modifier.fillMaxSize()
+) { pageIndex ->
+    val animal = animals[pageIndex]
+    AnimalDetailContent(animal = animal, onBackClick = onBackClick)
+}</div>
+      <p>個別のコンテンツでは、TopAppBar の戻るボタンやスクロール可能な詳細情報、画像表示、★の人気度表示などを Compose で組み立てています。</p>
+
+      <h2>ナビゲーションとパラメータ受け渡し</h2>
+      <p>Navigation Compose ではパスにプレースホルダーを埋め込む形で引数を受け渡します。詳細画面のルートは <code>animalDetail/{animalId}</code> と定義され、遷移時に <code>navController.navigate("animalDetail/$animalId")</code> で値を差し込みます。受け取り側では <code>navArgument</code> で Int 型を宣言し、安全に取り出しています。</p>
+
+      <h2>検索・ソートのまとめ</h2>
+      <p>検索は <code>contains</code> で名前・目・科を対象にし、ソートは Enum の <code>SortType</code> にまとめてあります。UI からの操作はすべて <code>MyZoodexApp</code> の状態を更新する形で処理されるため、一覧と詳細で常に同じ並び順が共有される設計です。</p>
+
+      <h2>ゴール</h2>
+      <p>この解説を読み終えたら、自分のデータクラスや画面を差し替えて、同じ構成のアプリを小さく作ってみましょう。Navigation と State の流れを意識して読むと、Compose でのアプリ設計の基本パターンが身につきます。</p>
+    </article>
+
+    <aside class="sidebar">
+      <h3>読むときのポイント</h3>
+      <p>・状態はできるだけ上の階層でまとめ、子コンポーネントには必要な値とコールバックだけ渡す。<br>・ナビゲーションのルート名はシンプルに保つ。<br>・HorizontalPager などの実験的 API では <code>@OptIn</code> を付ける。</p>
+      <h3>次に試すこと</h3>
+      <p>・動物データを自分で 3 件だけ用意し、検索・ソートが動くか確認する。<br>・<code>AnimalCard</code> にお気に入りボタンを追加し、状態をリストに保持する練習をする。</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2024 MyZoodex Learning Notes. コードを読み解いて力をつけよう。
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

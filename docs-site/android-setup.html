@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Android Studio のセットアップ | MyZoodex 学習ブログ</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">MyZoodex 学習ブログ</div>
+      <nav>
+        <a href="index.html">トップ</a>
+        <a href="android-setup.html">Android Studio</a>
+        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="compose-basics.html">Compose入門</a>
+        <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
+        <a href="next-steps.html">次のステップ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="main-wrapper">
+    <article>
+      <h1>Android Studio のセットアップ</h1>
+      <p>ここでは Android Studio をインストールし、最初のプロジェクトを起動するところまでを一気に進めます。内容は公式ドキュメント（Install Android Studio や Android Studio の概要）をベースにしつつ、初心者がつまずきやすいポイントを補足しています。</p>
+
+      <h2>1. ダウンロードとインストール</h2>
+      <ul class="steps">
+        <li><strong>公式サイトから最新の Android Studio を入手</strong><br>Google が配布するインストーラが最も安全です。Windows と macOS のいずれも同じページからダウンロードできます。</li>
+        <li><strong>Windows</strong>: インストーラを実行し、デフォルト設定のまま「Next」を押して進めれば問題ありません。インストール後、必要に応じて Android SDK の追加ダウンロードが始まります。</li>
+        <li><strong>macOS</strong>: ダウンロードした .dmg を開き、Android Studio を Applications フォルダへドラッグします。初回起動時に Gatekeeper が警告する場合がありますが、「開く」を選べば大丈夫です。</li>
+      </ul>
+      <div class="note">よくあるつまずき: インストール後の追加ダウンロード中にネットワークが不安定だと失敗することがあります。安定した回線で実施しましょう。</div>
+
+      <h2>2. 初回起動と画面の見かた</h2>
+      <p>初回起動すると、テーマ（Light/Dark）と既存設定のインポート有無を尋ねられます。迷ったらデフォルトのままで構いません。その後「Welcome to Android Studio」画面が表示され、ここから新規プロジェクトの作成や既存プロジェクトのオープンができます。</p>
+
+      <h2>3. 新規プロジェクトを作成する</h2>
+      <p>公式の「Create your first project」手順に沿って、次のように進めます。</p>
+      <ol class="steps">
+        <li><strong>Start a new Android Studio project</strong> を選択</li>
+        <li>テンプレートは <strong>Empty Activity</strong> もしくは <strong>Empty Compose Activity</strong> を選びます。Compose で UI を作るなら後者が便利です。</li>
+        <li>プロジェクト名と保存先を入力し、言語は Kotlin を選択</li>
+        <li>最低 SDK は「API 24 (Android 7.0)」以上が扱いやすいです（エミュレータも用意しやすいため）。</li>
+      </ol>
+      <p>作成後、Gradle の同期が走ります。右下に進捗バーが出るので完了まで待ちましょう。</p>
+
+      <h2>4. エミュレータ or 実機で動かす</h2>
+      <p>開発初期はエミュレータが手軽ですが、実機確認もいずれ必要になります。</p>
+      <ul>
+        <li><strong>エミュレータ</strong>: 「Device Manager」から新規 Virtual Device を追加します。Pixel シリーズ + 推奨されたシステムイメージを選んでおけば OK です。</li>
+        <li><strong>実機</strong>: Android 端末の開発者向けオプションで「USB デバッグ」を有効にし、USB ケーブルで PC に接続します。接続許可のダイアログが出たら許可してください。</li>
+      </ul>
+      <p>どちらの場合も、実行ボタン（三角形）からデバイスを選択すればビルドとインストールが始まります。</p>
+
+      <h2>5. 次のステップへ</h2>
+      <p>環境が整ったら、次は Kotlin の基本文法を確認し、Jetpack Compose で UI を作ってみましょう。続きは「Kotlin 入門」と「Compose 入門」ページで解説します。</p>
+    </article>
+
+    <aside class="sidebar">
+      <h3>補足メモ</h3>
+      <p>・ディスク容量は 10GB 以上あると安心です。<br>・エミュレータが重い場合は、RAM 2GB 程度の設定にし、x86 イメージを選びましょう。<br>・企業や学校の PC ではプロキシ設定が必要な場合があります。「Appearance & Behavior > System Settings > HTTP Proxy」を確認してください。</p>
+      <h3>参考</h3>
+      <p>Install Android Studio (公式) / Android Studio の概要 / Create your first project など。最新版のドキュメントを適宜参照してください。</p>
+    </aside>
+  </div>
+
+  <footer>
+    © 2024 MyZoodex Learning Notes. Android 学習をサポートします。
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>

@@ -13,7 +13,7 @@
       <nav>
         <a href="index.html">トップ</a>
         <a href="android-setup.html">Android Studio</a>
-        <a href="kotlin-basics.html">Kotlin入門</a>
+        <a href="kotlin-basics.html" class="active">Kotlin入門</a>
         <a href="compose-basics.html">Compose入門</a>
         <a href="myzoodex-tutorial.html">MyZoodexを作る</a>
         <a href="next-steps.html">次のステップ</a>
@@ -24,36 +24,83 @@
   <div class="main-wrapper">
     <article>
       <h1>Kotlin の基本文法を押さえよう</h1>
-      <p>Kotlin 公式ドキュメントの「Basic syntax」「Null safety」「Classes and Objects」をベースに、MyZoodex にも登場する表現を中心に紹介します。</p>
+      <p>これから Kotlin を学ぶ方向けに、公式ドキュメント（"<a href="https://kotlinlang.org/docs/basic-syntax.html" target="_blank" rel="noopener">Basic syntax</a>" や "<a href="https://kotlinlang.org/docs/null-safety.html" target="_blank" rel="noopener">Null safety</a>" など）をベースに、MyZoodex のコードで使われている表現をゼロから解説します。Android Studio のエディタでコピー＆ペーストしやすいよう、コード欄は改行付きで掲載しています。</p>
 
       <h2>val と var、型推論</h2>
-      <p><code>val</code> は再代入不可の変数、<code>var</code> は再代入可能です。型は多くの場合コンパイラが推論してくれます。</p>
-      <div class="code-block">val zooName = "MyZoodex" // String と推論される
-var count: Int = 200      // 明示的に Int を指定</div>
+      <p><code>val</code> は再代入不可、<code>var</code> は再代入可能な変数を表します。Kotlin は型推論が強力なので、右辺から型を判断してくれます。明示したい場合のみ型を付けます。</p>
+      <div class="code-block"><pre><code class="language-kotlin">val zooName = "MyZoodex"   // String と推論される
+var count: Int = 200       // Int を明示して宣言
 
-      <h2>関数定義</h2>
-      <p><code>fun</code> キーワードで宣言します。戻り値が 1 行なら単一式関数で書けます。</p>
-      <div class="code-block">fun greet(name: String): String {
+// 明示しなくてもコンパイラが型を決めてくれる
+val isPopular = count &gt;= 100</code></pre></div>
+
+      <h2>関数定義と引数</h2>
+      <p><code>fun</code> キーワードで関数を定義します。戻り値が 1 行で表せる場合は「単一式関数」で簡潔に書けます。デフォルト引数や名前付き引数も Kotlin の基本機能です。</p>
+      <div class="code-block"><pre><code class="language-kotlin">fun greet(name: String): String {
     return "こんにちは、${'$'}name さん"
 }
 
-fun greetShort(name: String) = "こんにちは、${'$'}name さん"</div>
+// 単一式関数
+fun greetShort(name: String) = "こんにちは、${'$'}name さん"
 
-      <h2>if と when</h2>
-      <p><code>if</code> も <code>when</code> も「式」として値を返せるのが Kotlin の特徴です。</p>
-      <div class="code-block">val popularity = 8
-val tag = if (popularity >= 8) "大人気" else "のんびり"
+// デフォルト引数と名前付き引数
+fun announce(name: String = "ゲスト", times: Int = 1) {
+    repeat(times) { println("ようこそ ${'$'}name") }
+}
+
+announce(times = 2)          // "ゲスト" を 2 回表示
+announce(name = "キリン")   // 1 回だけ表示</code></pre></div>
+
+      <h2>if と when（条件分岐）</h2>
+      <p><code>if</code> も <code>when</code> も「式」として値を返せる点が Java と異なります。分岐結果をそのまま変数に代入できます。</p>
+      <div class="code-block"><pre><code class="language-kotlin">val popularity = 8
+val tag = if (popularity &gt;= 8) "大人気" else "のんびり"
 
 val terrain = "サバンナ"
 val icon = when (terrain) {
-    "サバンナ" -> "🌾"
-    "ジャングル" -> "🌴"
-    else -> "🐾"
-}</div>
+    "サバンナ" -&gt; "🌾"
+    "ジャングル" -&gt; "🌴"
+    else -&gt; "🐾"
+}</code></pre></div>
+
+      <h2>文字列テンプレートと文字列処理</h2>
+      <p><code>${'$'}変数</code> で変数を埋め込むのが Kotlin の文字列テンプレートです。複数行の文字列は <code>"""</code> で囲むと改行を含めて書けます。</p>
+      <div class="code-block"><pre><code class="language-kotlin">val name = "アジアゾウ"
+val message = "${'$'}name は人気です"
+
+val description = """
+    複数行の説明をそのまま書けます。
+    インデントを整えたいときは trimIndent() を併用します。
+""".trimIndent()</code></pre></div>
+
+      <h2>コレクションとラムダ式</h2>
+      <p><code>listOf</code> で不変リスト、<code>mutableListOf</code> で可変リストを作成します。高階関数（<code>filter</code>、<code>map</code>、<code>sortedBy</code> など）とラムダ式を組み合わせるのが Kotlin らしい書き方です。</p>
+      <div class="code-block"><pre><code class="language-kotlin">val animals = listOf("アジアゾウ", "ジャイアントパンダ", "ホッキョクグマ")
+val longNames = animals.filter { it.length &gt;= 5 }
+val upper = animals.map { it.uppercase() }
+val sorted = animals.sortedBy { it.length }
+
+val mutable = mutableListOf("レッサーパンダ")
+mutable.add("アルパカ")
+mutable.removeAt(0)</code></pre></div>
+
+      <h2>null 安全とスマートキャスト</h2>
+      <p>公式ドキュメントが強調するように、Kotlin では「null を許容する型」に <code>?</code> を付けます。安全呼び出し <code>?.</code>、エルビス演算子 <code>?:</code>、<code>let</code> などを組み合わせて NullPointerException を防ぎます。</p>
+      <div class="code-block"><pre><code class="language-kotlin">val note: String? = null
+val length = note?.length ?: 0 // null のときは 0
+
+note?.let { nonNullNote -&gt;
+    println(nonNullNote.uppercase())
+}
+
+// スマートキャスト: null チェック後は非 null 扱い
+if (note != null) {
+    println(note.length) // note は String にキャスト済み
+}</code></pre></div>
 
       <h2>クラスと data class</h2>
-      <p>MyZoodex では動物 1 件を表す <code>data class</code> が中心です。主な特徴は、プロパティの自動生成（<code>equals</code> / <code>hashCode</code> / <code>copy</code> など）です。</p>
-      <div class="code-block">data class Animal(
+      <p>MyZoodex では 1 匹の動物を <code>data class</code> で表現しています。<code>data</code> 修飾子により <code>equals</code>/<code>hashCode</code>/<code>copy</code> などが自動生成され、データ保持に向いたクラスになります。</p>
+      <div class="code-block"><pre><code class="language-kotlin">data class Animal(
     val id: Int,
     val name: String,
     val distribution: String,
@@ -67,29 +114,65 @@ val icon = when (terrain) {
     val imageRes: Int
 )
 
-val elephant = Animal(1, "アジアゾウ", "東南アジア", "草原", "アジアゾーン", 2, 4, "ゾウ", "ゾウ", "草", R.drawable.animal_1)</div>
+val elephant = Animal(
+    id = 1,
+    name = "アジアゾウ",
+    distribution = "東南アジア",
+    terrain = "草原",
+    area = "アジアゾーン",
+    count = 2,
+    popularity = 4,
+    order = "ゾウ",
+    family = "ゾウ",
+    food = "草",
+    imageRes = R.drawable.animal_1
+)
 
-      <h2>コレクションと簡単な操作</h2>
-      <p><code>listOf</code> で不変リスト、<code>mutableListOf</code> で可変リストを作れます。<code>filter</code> や <code>map</code> などの操作はラムダ式で書くのが定番です。</p>
-      <div class="code-block">val animals = listOf(elephant, /* 他の動物 */)
-val savanna = animals.filter { it.terrain == "サバンナ" }
-val names = animals.map { it.name }
-val sorted = animals.sortedBy { it.popularity }</div>
+val copy = elephant.copy(name = "サバンナゾウ")</code></pre></div>
 
-      <h2>null 安全</h2>
-      <p>Kotlin では、null を許容する型は <code>String?</code> のように <code>?</code> を付けます。安全呼び出し <code>?.</code> やエルビス演算子 <code>?:</code> を活用することで、NullPointerException を防ぎます。</p>
-      <div class="code-block">val note: String? = null
-val length = note?.length ?: 0 // null のときは 0 を返す</div>
+      <h2>継承と sealed クラス</h2>
+      <p>Kotlin のクラスはデフォルトで <code>final</code> です。継承を許可したいときは <code>open</code> を付けます。状態を限定したいときは <code>sealed class</code> を使うと、<code>when</code> 式で網羅性チェックが効きます（Compose の UI state でも定番）。</p>
+      <div class="code-block"><pre><code class="language-kotlin">open class AnimalCard(val title: String)
+class PopularCard(title: String, val stars: Int) : AnimalCard(title)
+
+sealed class LoadState {
+    object Idle : LoadState()
+    object Loading : LoadState()
+    data class Error(val message: String) : LoadState()
+}
+
+fun render(state: LoadState) = when (state) {
+    LoadState.Idle -&gt; "待機中"
+    LoadState.Loading -&gt; "読み込み中"
+    is LoadState.Error -&gt; state.message
+}</code></pre></div>
+
+      <h2>拡張関数とスコープ関数</h2>
+      <p>標準ライブラリの強みは拡張関数とスコープ関数（<code>apply</code>、<code>run</code>、<code>also</code> など）です。オブジェクトの初期化や処理のチェーンを読みやすくできます。</p>
+      <div class="code-block"><pre><code class="language-kotlin">// 拡張関数の例
+fun String.addAnimalIcon(): String = "🐾 ${'$'}this"
+
+val label = "MyZoodex".addAnimalIcon()
+
+// スコープ関数 apply / also
+val builder = StringBuilder().apply {
+    append("ゾウ")
+    append("・キリン")
+}.also {
+    println("現在の長さ: ${'$'}{it.length}")
+}
+
+val result = builder.toString()</code></pre></div>
 
       <h2>MyZoodex での使われ方</h2>
-      <p>MainActivity.kt では、動物リストを <code>listOf</code> でまとめ、<code>filter</code> や <code>sortedBy</code> で検索・並べ替えをしています。こうしたコレクション操作に慣れておくと、アプリの振る舞いを読み解きやすくなります。</p>
+      <p>MainActivity.kt では動物リストを <code>listOf</code> で構築し、<code>filter</code> や <code>sortedBy</code> で検索・並べ替えを行っています。Compose の UI 層では <code>when</code> と <code>data class</code> の組み合わせが画面状態を表現するために頻出です。ここで紹介した基本文法を押さえておくと、公式サンプルや Android Studio のコード補完（JetBrains の IntelliJ ベース）を活用しやすくなります。</p>
     </article>
 
     <aside class="sidebar">
       <h3>用語メモ</h3>
-      <p>・ラムダ式: 無名関数のこと。<code>{ it.name }</code> のように書く。<br>・スマートキャスト: null チェックの後は非 null として扱える Kotlin の仕組み。</p>
+      <p>・ラムダ式: 無名関数のこと。<code>{ it.name }</code> のように書く。<br>・スマートキャスト: null チェックの後は非 null として扱える Kotlin の仕組み。<br>・シングルエクスプレッション: 関数の本体が 1 行で済む書き方。</p>
       <h3>次に読む</h3>
-      <p>Jetpack Compose の UI コードでも同じ文法が登場します。特に <code>when</code> と <code>data class</code> は頻出なので復習しておきましょう。</p>
+      <p>Jetpack Compose の UI コードでも同じ文法が登場します。特に <code>when</code> と <code>data class</code> は頻出なので復習しておきましょう。さらに公式の "<a href="https://kotlinlang.org/docs/coding-conventions.html" target="_blank" rel="noopener">Coding conventions</a>" や Android の "<a href="https://developer.android.com/kotlin?hl=ja" target="_blank" rel="noopener">Kotlin on Android</a>" も目を通すと理解が深まります。</p>
     </aside>
   </div>
 

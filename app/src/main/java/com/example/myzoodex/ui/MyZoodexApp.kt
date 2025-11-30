@@ -1,26 +1,34 @@
 package com.example.myzoodex.ui
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.myzoodex.data.AnimalRepository
 import com.example.myzoodex.model.Animal
 import com.example.myzoodex.model.SortType
 import com.example.myzoodex.ui.screen.AnimalDetailScreen
 import com.example.myzoodex.ui.screen.AnimalListScreen
 import com.example.myzoodex.ui.screen.SplashScreen
+import com.example.myzoodex.ui.AnimalViewModel
 
 @Composable
 fun MyZoodexApp() {
     val navController = rememberNavController()
-    val animals = AnimalRepository.animals
+    val context = LocalContext.current
+    val viewModel: AnimalViewModel = viewModel(
+        factory = AnimalViewModel.provideFactory(context.applicationContext as Application)
+    )
+    val animals by viewModel.animals.collectAsStateWithLifecycle()
 
     var searchText by remember { mutableStateOf("") }
     var sortType by remember { mutableStateOf(SortType.ID_ASC) }

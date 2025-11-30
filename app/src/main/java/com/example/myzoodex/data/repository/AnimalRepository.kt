@@ -1,9 +1,31 @@
-package com.example.myzoodex.data
+package com.example.myzoodex.data.repository
 
 import com.example.myzoodex.R
+import com.example.myzoodex.data.local.dao.AnimalDao
+import com.example.myzoodex.data.local.entity.AnimalEntity
 import com.example.myzoodex.model.Animal
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-object AnimalRepository {
+class AnimalRepository(private val animalDao: AnimalDao) {
+    fun getAnimals(): Flow<List<Animal>> =
+        animalDao.getAnimals().map { entities -> entities.map { it.toModel() } }
+
+    fun getAnimal(id: Int): Flow<Animal?> =
+        animalDao.getAnimal(id).map { entity -> entity?.toModel() }
+
+    suspend fun upsertAnimals(animals: List<Animal>) {
+        animalDao.insertAnimals(animals.map { AnimalEntity.fromModel(it) })
+    }
+
+    suspend fun seedIfEmpty(seed: List<Animal>) {
+        if (animalDao.countAnimals() == 0) {
+            upsertAnimals(seed)
+        }
+    }
+}
+
+object AnimalSeedData {
     val animals = listOf(
 
         Animal(1, "アジアゾウ", "東南アジア", "草原", "アジアゾーン：アジアゾウのすみか", 2, 4, "ゾウ", "ゾウ", "草、葉", "5.5-6.5m", """　アジアゾウは、アジア大陸に生息する現生する地上最大の動物の一つであり、アフリカゾウに次ぐ大きさを誇ります。インド、スリランカ、インドシナ半島、インドネシアなどの森林や草原地帯に広く分布していますが、生息地の減少により絶滅危惧種に指定されています。
